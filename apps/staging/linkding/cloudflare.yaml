@@ -47,6 +47,9 @@ spec:
       - name: creds
         secret:
           secretName: tunnel-credentials
+          items:
+            - key: credentials.json
+              path: credentials.json
 
       # Create a config.yaml file from the ConfigMap below.
       - name: config
