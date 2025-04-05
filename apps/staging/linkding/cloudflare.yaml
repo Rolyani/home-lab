@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: cloudflared
-  replicas: 1 # You could also consider elastic scaling for this deployment
+  replicas: 2 # You could also consider elastic scaling for this deployment
   template:
     metadata:
       labels:
@@ -47,9 +47,6 @@ spec:
       - name: creds
         secret:
           secretName: tunnel-credentials
-          items:
-            - key: credentials
-              path: credentials.json
 
       # Create a config.yaml file from the ConfigMap below.
       - name: config
@@ -70,7 +67,7 @@ metadata:
 data:
   config.yaml: |
     # Name of the tunnel you want to run
-
+    
     tunnel: ldhl
 
     credentials-file: /etc/cloudflared/creds/credentials.json
@@ -90,4 +87,3 @@ data:
       service: hello_world
     # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
     - service: http_status:404
-
