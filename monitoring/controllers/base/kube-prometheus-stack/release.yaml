@@ -29,20 +29,20 @@ spec:
     grafana:
       adminPassword: iann
       ingress:
-      enabled: true
+        enabled: true
 
-      ingressClassName: traefik
+        ingressClassName: traefik
 
-      hosts:
-        - grs.ian-naylor.com
+        hosts:
+          - grs.ian-naylor.com
 
-      ## Path for grafana ingress
-      path: /
+        ## Path for grafana ingress
+        path: /
 
-      ## TLS configuration for grafana Ingress
-      ## Secret must be manually created in the namespace
-      ##
-      tls: []
-      # - secretName: grafana-general-tls
-      #   hosts:
-      #   - grafana.example.com
+        ## TLS configuration for grafana Ingress
+        ## Secret must be manually created in the namespace
+        ##
+        tls: []
+        # - secretName: grafana-general-tls
+        #   hosts:
+        #   - grafana.example.com
