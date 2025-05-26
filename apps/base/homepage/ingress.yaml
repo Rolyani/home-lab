@@ -23,6 +23,9 @@ spec:
                 name: homepage
                 port:
                   number: 3000
+  hosts:
+    - homepage.ian-naylor.com
+
   tls:
     - hosts:
       - homepage.ian-naylor.com
