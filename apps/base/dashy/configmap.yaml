@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy-config
+  namespace: dashy
+data:
+  conf.yml: |
+    pageInfo:
+      title: Home Lab Dashboard
+      description: Centralised access to self-hosted services
+      navLinks:
+        - title: GitHub Repository
+          path: https://github.com/Rolyani/home-lab
+        - title: Dashy Documentation
+          path: https://dashy.to/docs/
+      footerText: "© 2025 Rolyani | Powered by Dashy"
+
+  appConfig:
+    theme: dracula
+    language: en-GB
+    layout: auto
+    iconSize: medium
+    statusCheck: true
+
+  sections:
+    - name: Applications
+      icon: fas fa-th-large
+      items:
+        - title: Linkding
+          description: Bookmark manager
+          icon: https://linkding.example.com/favicon.ico
+          url: http://linkding.dashy.local
+          statusCheck: true
+        - title: Grafana
+          description: Metrics and dashboards
+          icon: https://grafana.com/favicon.ico
+          url: http://grafana.dashy.local
+          statusCheck: true
+
