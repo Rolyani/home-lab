@@ -13,7 +13,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: "homepage.my.network"
+    - host: "homepage.ian-naylor.com"
       http:
         paths:
           - path: "/"
@@ -23,8 +23,6 @@ spec:
                 name: homepage
                 port:
                   number: 3000
-  hosts:
-    - homepage.ian-naylor.com
 
   tls:
     - hosts:
