@@ -37,3 +37,19 @@ data:
           url: http://grafana.dashy.local
           statusCheck: true
 
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - dashy.ian-naylor.com  # Update to your preferred subdomain
+  path: /
+  annotations:
+    # Optional Traefik annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # If using cert-manager with Traefik
+    #cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  #tls:
+    #- secretName: dashy-tls
+      #hosts:
+        #- dashy.ian-naylor.com

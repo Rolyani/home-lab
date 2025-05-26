@@ -16,7 +16,8 @@ spec:
   targetNamespace: dashy
   valuesFrom:
     - kind: ConfigMap
-      name: configmap.yaml
+      name: configmap
+      valuesKey: conf.yaml
       namespace: dashy
   values:
     service:
