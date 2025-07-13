@@ -1,0 +1,17 @@
+apiVersion: mysql.kb.io/v1alpha1
+kind: MySQLCluster
+metadata:
+  name: blog-db
+  namespace: lessons-in-progress
+spec:
+  topology:
+    mode: Standalone
+    replicas: 1
+  storage:
+    dataVolumeClaimSpec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 5Gi
+  version: "8.0.30"
+
