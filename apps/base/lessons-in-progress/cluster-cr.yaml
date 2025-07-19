@@ -5,11 +5,11 @@ metadata:
   namespace: lessons-in-progress
 spec:
   clusterDefinitionRef: mysql
-  clusterVersionRef: mysql-8.0.33
+  clusterVersionRef: mysql-8.0.30
   terminationPolicy: Delete
+
   componentSpecs:
     - name: mysql
-      componentDefRef: mysql
       replicas: 1
       volumeClaimTemplates:
         - name: data
