@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-backend
+  namespace: lessons-in-progress
+  labels:
+    app: admin-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-backend
+  template:
+    metadata:
+      labels:
+        app: admin-backend
+    spec:
+      containers:
+        - name: admin-backend
+          image: ianrn/microservice-blog-admin-backend:v1.0.0
+          ports:
+            - containerPort: 80
+          envFrom:
+            - secretRef:
+                name: blog-db-secret
+

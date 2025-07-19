@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: frontend-ingress
+  namespace: lessons-in-progress
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`blog.local`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: frontend
+          port: 80
+
