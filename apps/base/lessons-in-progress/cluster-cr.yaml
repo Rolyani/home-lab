@@ -8,7 +8,7 @@ spec:
   componentSpecs:
     - name: mysql
       componentDefRef: mysql
-      clusterVersionRef: mysql-8.0.33
+      version: mysql-8.0.33
       replicas: 1
       volumeClaimTemplates:
         - name: data
