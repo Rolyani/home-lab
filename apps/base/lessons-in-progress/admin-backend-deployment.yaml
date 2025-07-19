@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: admin-backend
-          image: ianrn/microservice-blog-admin-backend:v1.0.0
+          image: ianrn/microservice-blog-admin-backend:latest
           ports:
             - containerPort: 80
           envFrom:

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: php-fpm
-          image: ianrn/microservice-blog-posts-service:v1.0.0
+          image: ianrn/microservice-blog-posts-service:latest
           ports:
             - containerPort: 9000
           envFrom:

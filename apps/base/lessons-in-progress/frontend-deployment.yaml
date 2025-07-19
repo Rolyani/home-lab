@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ianrn/microservice-blog-frontend:v1.0.0
+          image: ianrn/microservice-blog-frontend:latest
           ports:
             - containerPort: 80
 
