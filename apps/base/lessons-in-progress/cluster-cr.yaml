@@ -4,11 +4,12 @@ metadata:
   name: blog-mysql
   namespace: lessons-in-progress
 spec:
+  clusterDefinitionRef: mysql
+  clusterVersionRef: mysql-8.0.33
   terminationPolicy: Delete
   componentSpecs:
     - name: mysql
       componentDefRef: mysql
-      version: mysql-8.0.33
       replicas: 1
       volumeClaimTemplates:
         - name: data
@@ -17,4 +18,3 @@ spec:
             resources:
               requests:
                 storage: 10Gi
-
