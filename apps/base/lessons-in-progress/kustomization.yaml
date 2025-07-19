@@ -2,4 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
-    #  - cluster-cr.yaml
+  - cluster-cr.yaml
+  - admin-backend-deployment.yaml
+  - admin-backend-ingress.yaml
+  - admin-backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-ingress.yaml
+  - frontend-service.yaml
+  - kustomization.yaml
+  - posts-migration-job.yaml
+  - posts-service-deployment.yaml
+  - posts-service-ingress.yaml
+  - posts-service-nginx-config.yaml
+  - posts-service-service.yaml
