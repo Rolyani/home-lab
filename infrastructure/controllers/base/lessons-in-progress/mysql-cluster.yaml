@@ -1,9 +1,12 @@
-apiVersion: mysql.kb.io/v1alpha1
-kind: MySQLCluster
+apiVersion: apps.kubeblocks.io/v1alpha1
+kind: Cluster
 metadata:
   name: blog-db
   namespace: lessons-in-progress
 spec:
+  clusterDefinitionRef: mysql
+  clusterVersionRef: mysql-8.0.30
+  terminationPolicy: Delete
   topology:
     mode: Standalone
     replicas: 1
@@ -13,5 +16,3 @@ spec:
       resources:
         requests:
           storage: 5Gi
-  version: "8.0.30"
-
