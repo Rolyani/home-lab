@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: lessons-in-progress
 resources:
   - ../../base/lessons-in-progress/
+  - blog-db-secret.yaml
