@@ -4,7 +4,6 @@ metadata:
   name: lessons-in-progress
 resources:
   - namespace.yaml
-  - cluster-cr.yaml
   - admin-backend-deployment.yaml
   - admin-backend-ingress.yaml
   - admin-backend-service.yaml
