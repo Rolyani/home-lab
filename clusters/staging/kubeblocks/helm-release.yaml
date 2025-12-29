@@ -14,5 +14,8 @@ spec:
         namespace: kubeblocks
       version: ">=0.9.0"
   values:
+    installCRDs: true
+    addons:
+      enabled: false
     image:
       pullPolicy: IfNotPresent
