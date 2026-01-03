@@ -6,4 +6,8 @@ spec:
   type: Helm
   helm:
     chartLocationURL: https://apecloud.github.io/helm-charts/mysql-1.0.0.tgz
-  defaultInstallValues: []
+  defaultInstallValues:
+    - enabled: true
+      persistentVolumeEnabled: true
+      replicas: 1
+      storageClass: longhorn
