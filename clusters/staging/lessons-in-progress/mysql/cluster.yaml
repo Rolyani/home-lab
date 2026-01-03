@@ -10,8 +10,8 @@ spec:
 
   componentSpecs:
     - name: mysql
-      componentVersionRef: mysql
       replicas: 1
+      serviceVersion: "8.0.44"
       volumeClaimTemplates:
         - name: data
           spec:
