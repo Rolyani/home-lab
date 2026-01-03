@@ -4,9 +4,9 @@ metadata:
   name: lessons-mysql
   namespace: lessons-in-progress
 spec:
-  clusterDefinitionRef: mysql
-  topology: semisync
   terminationPolicy: Delete
+  clusterDef: mysql
+  topology: semisync
 
   componentSpecs:
     - name: mysql
