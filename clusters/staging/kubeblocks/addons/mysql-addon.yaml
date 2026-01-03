@@ -3,6 +3,7 @@ kind: Addon
 metadata:
   name: mysql
 spec:
-  type: helm
+  type: Helm
   helm:
     chartLocationURL: https://apecloud.github.io/helm-charts/mysql-1.0.0.tgz
+  defaultInstallValues: {}
