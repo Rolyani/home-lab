@@ -5,9 +5,7 @@ metadata:
 spec:
   type: Helm
   helm:
-    chartsImage: apecloud-registry.cn-zhangjiakou.cr.aliyuncs.com/apecloud/kubeblocks-charts:1.0.1
-    chartsPathInImage: /charts
-    chartLocationURL: mysql
+    chartLocationURL: https://github.com/apecloud/helm-charts/releases/download/mysql-1.1.0-alpha.0/mysql-1.1.0-alpha.0.tgz
   defaultInstallValues:
     - enabled: true
       persistentVolumeEnabled: true
