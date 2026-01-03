@@ -4,3 +4,4 @@ resources:
   - gotk-components.yaml
   - gotk-sync.yaml
   - kubeblocks-kustomization.yaml
+  - lessons-in-progress-kustomization.yaml

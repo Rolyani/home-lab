@@ -1,0 +1,23 @@
+apiVersion: apps.kubeblocks.io/v1
+kind: Cluster
+metadata:
+  name: lessons-mysql
+  namespace: lessons-in-progress
+spec:
+  clusterDefinitionRef: mysql
+  topology: semisync
+  terminationPolicy: Delete
+
+  componentSpecs:
+    - name: mysql
+      componentVersionRef: mysql
+      replicas: 1
+      volumeClaimTemplates:
+        - name: data
+          spec:
+            storageClassName: longhorn
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 20Gi

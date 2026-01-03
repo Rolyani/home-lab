@@ -1,0 +1,15 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: lessons-in-progress
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./clusters/staging/lessons-in-progress
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  timeout: 15m0s
+
