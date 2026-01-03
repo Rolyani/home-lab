@@ -1,0 +1,12 @@
+apiVersion: extensions.kubeblocks.io/v1alpha1
+kind: Addon
+metadata:
+  name: mysql
+spec:
+  type: Helm
+  helm:
+    chart:
+      repo: https://apecloud.github.io/helm-charts
+      name: mysql
+      version: 0.9.0
+
