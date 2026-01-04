@@ -6,3 +6,4 @@ resources:
   - kubeblocks-kustomization.yaml
   - lessons-in-progress-kustomization.yaml
   - infrastructure-controllers-kustomization.yaml
+  - longhorn-kustomization.yaml
