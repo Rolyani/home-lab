@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-create-dg-user
+  namespace: lessons-in-progress
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mysql-client
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lessons-mysql-mysql-account-root
+                  key: password
+            - name: DATAGRIP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-dg-credentials
+                  key: username
+            - name: DATAGRIP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-dg-credentials
+                  key: password
+          command:
+            - sh
+            - -eu
+            - -c
+            - |
+              umask 077
+              cat > /tmp/root.cnf <<EOF
+              [client]
+              host=lessons-mysql-mysql
+              user=root
+              password=${MYSQL_ROOT_PASSWORD}
+              EOF
+
+              mysql --defaults-extra-file=/tmp/root.cnf <<EOF
+              CREATE USER IF NOT EXISTS '${DATAGRIP_USER}'@'%' IDENTIFIED BY '${DATAGRIP_PASSWORD}';
+              GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX
+                ON lessons.* TO '${DATAGRIP_USER}'@'%';
+              FLUSH PRIVILEGES;
+              EOF
+
+              rm -f /tmp/root.cnf
