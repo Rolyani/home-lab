@@ -20,4 +20,5 @@ spec:
     keepAddons: true
     image:
       pullPolicy: IfNotPresent
-
+    dataProtection:
+      enabled: false
