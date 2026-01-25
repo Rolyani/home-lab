@@ -12,10 +12,12 @@ spec:
         kind: HelmRepository
         name: kubeblocks
         namespace: kubeblocks
-      version: ">=0.9.0"
+      version: "1.0.1"
   values:
     installCRDs: true
-    addons:
-      enabled: false
+    autoInstalledAddons: []
+    upgradeAddons: false
+    keepAddons: true
     image:
       pullPolicy: IfNotPresent
+
