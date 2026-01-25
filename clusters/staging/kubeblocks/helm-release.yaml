@@ -15,10 +15,12 @@ spec:
       version: "1.0.1"
   values:
     installCRDs: true
+    addons:
+      enabled: false
     autoInstalledAddons: []
     upgradeAddons: false
-    keepAddons: true
-    image:
-      pullPolicy: IfNotPresent
     dataProtection:
       enabled: false
+    image:
+      pullPolicy: IfNotPresent
+
