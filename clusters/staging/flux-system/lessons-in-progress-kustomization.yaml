@@ -12,6 +12,4 @@ spec:
     name: flux-system
   wait: true
   timeout: 15m0s
-  dependsOn:
-    - name: kubeblocks
 
