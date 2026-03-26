@@ -5,3 +5,4 @@ resources:
   - gotk-sync.yaml
   - infrastructure-controllers-kustomization.yaml
   - longhorn-kustomization.yaml
+  - apps-kustomization.yaml
