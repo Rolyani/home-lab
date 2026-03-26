@@ -6,3 +6,4 @@ resources:
   - infrastructure-controllers-kustomization.yaml
   - longhorn-kustomization.yaml
   - apps-kustomization.yaml
+  - monitoring-kustomization.yaml
