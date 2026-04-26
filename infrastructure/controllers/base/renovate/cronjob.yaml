@@ -15,6 +15,7 @@ spec:
               image: renovate/renovate:latest
               args:
                 - Rolyani/home-lab
+                - Rolyani/blog-final
 
               envFrom:
                 - secretRef:
