@@ -1,0 +1,17 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: lessons-in-progress-db
+  namespace: blog
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.4
+  storage:
+    size: 3Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: lessons_in_progress
+      owner: lessons_in_progress
+  monitoring:
+    enablePodMonitor: true
