@@ -7,3 +7,18 @@ resources:
   - longhorn-kustomization.yaml
   - apps-kustomization.yaml
   - monitoring-kustomization.yaml
+  # - blog-git-auth-secret.yaml      # uncomment in Commit B
+  # - blog-kustomization.yaml         # uncomment in Commit B
+patches:
+  - target:
+      group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: flux-system
+      namespace: flux-system
+    patch: |
+      - op: add
+        path: /spec/decryption
+        value:
+          provider: sops
+          secretRef:
+            name: sops-age
