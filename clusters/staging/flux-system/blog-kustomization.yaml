@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
-  url: https://github.com/Rolyani/blog
+  url: https://github.com/Rolyani/blog-final
   ref:
     branch: main
   secretRef:
