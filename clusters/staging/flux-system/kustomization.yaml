@@ -7,8 +7,8 @@ resources:
   - longhorn-kustomization.yaml
   - apps-kustomization.yaml
   - monitoring-kustomization.yaml
-  # - blog-git-auth-secret.yaml      # uncomment in Commit B
-  # - blog-kustomization.yaml         # uncomment in Commit B
+  - blog-git-auth-secret.yaml
+  - blog-kustomization.yaml
 patches:
   - target:
       group: kustomize.toolkit.fluxcd.io
