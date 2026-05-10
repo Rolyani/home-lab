@@ -16,7 +16,6 @@ Experiment with monitoring, logging, and security tooling.
 Gain hands-on experience with modern DevOps and cloud-native technologies.
 
 ## Important Notes
-This homelab is not designed for production use.
 
 Data and configurations within the cluster may be volatile and subject to change without notice.
 
