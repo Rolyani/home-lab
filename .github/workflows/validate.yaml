@@ -26,14 +26,14 @@ jobs:
             kustomize
             kubeconform
           kustomize: "5.4.3"
-          kubeconform: "0.6.7"
+          kubeconform: "0.7.0"
 
       - name: Build and validate overlays
         run: |
           set -euo pipefail
-          # Build each root overlay; Kustomize recursively pulls in child apps,
+          # Kustomize recursively pulls in child apps,
           # so new apps under these roots are validated automatically.
-          # Add a root here only when you add a whole new environment overlay.
+          # Add a root here only when adding a whole new environment overlay.
           ROOTS=(
             "apps/staging"
             "infrastructure/controllers/staging"
@@ -95,7 +95,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # full history so previously-committed secrets are still caught
 
       - name: Run gitleaks
         uses: gitleaks/gitleaks-action@v2
