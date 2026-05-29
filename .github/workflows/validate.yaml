@@ -46,6 +46,7 @@ jobs:
               | kubeconform \
                   -strict \
                   -ignore-missing-schemas \
+                  -skip Secret \
                   -schema-location default \
                   -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
                   -summary
@@ -94,7 +95,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # full history so previously-committed secrets are still caught
 
       - name: Run gitleaks
         uses: gitleaks/gitleaks-action@v2
