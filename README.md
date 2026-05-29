@@ -1,4 +1,6 @@
 # home-lab
+![Validate](https://github.com/Rolyani/home-lab/actions/workflows/validate.yaml/badge.svg)
+
 
  GitOps-managed Kubernetes homelab running on [k3s](https://k3s.io/) and reconciled by [Flux CD](https://fluxcd.io/). 
  Everything in the cluster — controllers, monitoring, and applications — is declared in this repository and applied automatically; there is no `kubectl apply` in the day-to-day workflow.
@@ -74,6 +76,32 @@ The `base` / `staging` split is standard Kustomize: `base/` holds environment-ag
  2. **Layered ordering** — infrastructure controllers reconcile with `wait: true` so dependents (e.g. CNPG-backed apps) only roll out once their operators are healthy.
  3. **Secrets stay encrypted in Git.** Files are encrypted with `age` per the rules in `.sops.yaml`; Flux decrypts them at apply time using the `sops-age` secret. Plaintext secrets never hit the repo.
  4. **Image updates flow through Renovate.** It opens PRs to bump container images and Helm charts; merging the PR is the deploy.
+
+## Validation & security
+
+Every pull request to `main` must pass four required checks before it can
+merge — direct pushes to `main` are blocked, so the checks below are a hard
+gate, not advisory. This applies to Renovate's automated PRs too.
+
+| Check | What it does |
+|-------|--------------|
+| **Build & schema-validate overlays** | Renders each Kustomize overlay exactly as Flux would (`kustomize build`) and schema-validates the output with `kubeconform`, including CNPG / Longhorn / Prometheus / Flux CRDs via the community schema catalog. Catches broken manifests before they reach the cluster. |
+| **Verify Secrets are SOPS-encrypted** | Fails the build if any `kind: Secret` with a committed payload is not SOPS-encrypted. ServiceAccount-token Secrets (cluster-minted payload) are exempt. |
+| **Scan for leaked secrets** | Runs `gitleaks` across full git history. SOPS ciphertext is allowlisted; anything else that looks like a credential fails the build. |
+| **Check for deprecated API versions** | Runs `flux migrate` and fails if it would rewrite any manifest, catching deprecated Kubernetes/Flux apiVersions. |
+
+The SOPS-encryption and gitleaks checks are complementary: the first guarantees
+the allowlisted files are actually encrypted; the second guarantees nothing
+leaks outside them. Together they let this repo hold encrypted secrets in public
+safely.
+
+The manifest-validation approach follows the official Flux CI example
+([`fluxcd/flux2-kustomize-helm-example`](https://github.com/fluxcd/flux2-kustomize-helm-example));
+the SOPS-encryption and gitleaks checks are additions specific to running a
+public repo that stores encrypted secrets.
+
+<img width="809" height="389" alt="image" src="https://github.com/user-attachments/assets/73c908e4-8b9c-4c9a-afa6-f2639cf3e762" />
+
 
 ## Applications
 
