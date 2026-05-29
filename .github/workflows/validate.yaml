@@ -25,29 +25,29 @@ jobs:
           setup-tools: |
             kustomize
             kubeconform
-            flux
           kustomize: "5.4.3"
           kubeconform: "0.6.7"
-          flux: "2.3.0"
 
       - name: Build and validate overlays
         run: |
           set -euo pipefail
-          # Every kustomization overlay to validate. Each must contain a kustomization.yaml.
-          OVERLAYS=(
+          # Build each root overlay; Kustomize recursively pulls in child apps,
+          # so new apps under these roots are validated automatically.
+          # Add a root here only when you add a whole new environment overlay.
+          ROOTS=(
+            "apps/staging"
             "infrastructure/controllers/staging"
             "monitoring/configs/staging"
             "monitoring/controllers/staging"
-            "apps/staging"
           )
-          for overlay in "${OVERLAYS[@]}"; do
-            echo "::group::Validating $overlay"
-            kustomize build "$overlay" \
+          for root in "${ROOTS[@]}"; do
+            echo "::group::Validating $root"
+            kustomize build "$root" \
               | kubeconform \
                   -strict \
                   -ignore-missing-schemas \
                   -schema-location default \
-                  -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceVersion}}.json' \
+                  -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
                   -summary
             echo "::endgroup::"
           done
@@ -99,4 +99,5 @@ jobs:
       - name: Run gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
