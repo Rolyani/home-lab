@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup tools
         uses: yokawasa/action-setup-kube-tools@v0.11.2
@@ -26,14 +26,14 @@ jobs:
             kustomize
             kubeconform
           kustomize: "5.4.3"
-          kubeconform: "0.7.0"
+          kubeconform: "0.6.7"
 
       - name: Build and validate overlays
         run: |
           set -euo pipefail
-          # Kustomize recursively pulls in child apps,
+          # Build each root overlay; Kustomize recursively pulls in child apps,
           # so new apps under these roots are validated automatically.
-          # Add a root here only when adding a whole new environment overlay.
+          # Add a root here only when you add a whole new environment overlay.
           ROOTS=(
             "apps/staging"
             "infrastructure/controllers/staging"
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check encryption
         run: |
@@ -93,15 +93,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0  # full history so previously-committed secrets are still caught
 
+      - name: Install gitleaks
+        run: |
+          set -euo pipefail
+          VERSION="8.30.1"
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo install gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
       - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
+        run: |
+          set -euo pipefail
+          gitleaks git . \
+            --config .gitleaks.toml \
+            --redact \
+            --verbose \
+            --exit-code 1
 
   # 4. Catch deprecated Kubernetes/Flux API versions. `flux migrate` rewrites
   #    manifests in place to their current apiVersions; if that produces a diff,
@@ -112,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Flux CLI
         uses: fluxcd/flux2/action@main
