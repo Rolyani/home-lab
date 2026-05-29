@@ -95,10 +95,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # full history so previously-committed secrets are still caught
+          fetch-depth: 0
 
       - name: Run gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
+
+  # 4. Catch deprecated Kubernetes/Flux API versions. `flux migrate` rewrites
+  #    manifests in place to their current apiVersions; if that produces a diff,
+  #    the repo contains deprecated versions that should be migrated and committed.
+  #    (Lifted from the official fluxcd/flux2-kustomize-helm-example test.yaml.)
+  deprecated-apis:
+    name: Check for deprecated API versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+
+      - name: Check API versions
+        run: |
+          set -euo pipefail
+          flux migrate -f . --yes
+          if [[ $(git diff --stat) != '' ]]; then
+            echo "::error::Deprecated API versions found."
+            git --no-pager diff
+            echo "Run 'flux migrate -f . --yes' locally and commit the changes."
+            exit 1
+          fi
+          echo "No deprecated API versions found."
