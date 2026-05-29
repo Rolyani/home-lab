@@ -20,13 +20,21 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup tools
-        uses: yokawasa/action-setup-kube-tools@v0.11.2
-        with:
-          setup-tools: |
-            kustomize
-            kubeconform
-          kustomize: "5.4.3"
-          kubeconform: "0.6.7"
+        run: |
+          set -euo pipefail
+          KUSTOMIZE_VERSION="5.8.1"
+          KUBECONFORM_VERSION="0.7.0"
+
+          curl -sSfL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" \
+            | tar -xz -C /tmp kustomize
+          sudo install /tmp/kustomize /usr/local/bin/kustomize
+
+          curl -sSfL "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+            | tar -xz -C /tmp kubeconform
+          sudo install /tmp/kubeconform /usr/local/bin/kubeconform
+
+          kustomize version
+          kubeconform -v
 
       - name: Build and validate overlays
         run: |
