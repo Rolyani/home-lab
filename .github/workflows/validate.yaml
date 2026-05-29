@@ -1,0 +1,130 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # 1. Render every Kustomize overlay exactly as Flux would, then schema-validate
+  #    the output (core Kubernetes resources + CRDs via the community catalog).
+  validate:
+    name: Build & schema-validate overlays
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup tools
+        uses: yokawasa/action-setup-kube-tools@v0.11.2
+        with:
+          setup-tools: |
+            kustomize
+            kubeconform
+          kustomize: "5.4.3"
+          kubeconform: "0.7.0"
+
+      - name: Build and validate overlays
+        run: |
+          set -euo pipefail
+          # Kustomize recursively pulls in child apps,
+          # so new apps under these roots are validated automatically.
+          # Add a root here only when adding a whole new environment overlay.
+          ROOTS=(
+            "apps/staging"
+            "infrastructure/controllers/staging"
+            "monitoring/configs/staging"
+            "monitoring/controllers/staging"
+          )
+          for root in "${ROOTS[@]}"; do
+            echo "::group::Validating $root"
+            kustomize build "$root" \
+              | kubeconform \
+                  -strict \
+                  -ignore-missing-schemas \
+                  -skip Secret \
+                  -schema-location default \
+                  -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+                  -summary
+            echo "::endgroup::"
+          done
+
+  # 2. Fail if any Secret manifest with a committed payload is NOT SOPS-encrypted.
+  #    ServiceAccount-token Secrets are skipped: their payload is minted by the
+  #    cluster at apply time, so there is nothing to encrypt.
+  sops-encrypted:
+    name: Verify Secrets are SOPS-encrypted
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check encryption
+        run: |
+          set -euo pipefail
+          SECRET_FILES=$(grep -rl --include="*.yaml" -e "kind: Secret" . || true)
+          FAIL=0
+          for f in $SECRET_FILES; do
+            # Skip SA-token Secrets: cluster-minted payload, nothing to encrypt.
+            if grep -q "type: kubernetes.io/service-account-token" "$f"; then
+              echo "Skipping SA-token Secret (no payload to encrypt): $f"
+              continue
+            fi
+            if ! grep -q "sops:" "$f"; then
+              echo "::error file=$f::Secret is NOT SOPS-encrypted"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then
+            echo "One or more Secret manifests are unencrypted."
+            echo "Encrypt with: sops --encrypt --in-place <file>"
+            exit 1
+          fi
+          echo "All Secret manifests with a payload are SOPS-encrypted."
+
+  # 3. Scan the full git history for any leaked secret outside the SOPS files.
+  #    Encrypted SOPS blobs are allowlisted in .gitleaks.toml.
+  gitleaks:
+    name: Scan for leaked secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history so previously-committed secrets are still caught
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+  # 4. Catch deprecated Kubernetes/Flux API versions. `flux migrate` rewrites
+  #    manifests in place to their current apiVersions; if that produces a diff,
+  #    the repo contains deprecated versions that should be migrated and committed.
+  #    (Lifted from the official fluxcd/flux2-kustomize-helm-example test.yaml.)
+  deprecated-apis:
+    name: Check for deprecated API versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+
+      - name: Check API versions
+        run: |
+          set -euo pipefail
+          flux migrate -f . --yes
+          if [[ $(git diff --stat) != '' ]]; then
+            echo "::error::Deprecated API versions found."
+            git --no-pager diff
+            echo "Run 'flux migrate -f . --yes' locally and commit the changes."
+            exit 1
+          fi
+          echo "No deprecated API versions found."
