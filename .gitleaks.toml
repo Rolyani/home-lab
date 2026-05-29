@@ -1,0 +1,15 @@
+title = "home-lab gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "SOPS-encrypted files are safe to commit; their encryption is enforced by the sops-encrypted CI job."
+paths = [
+  '''apps/base/blog/ghcr-pull-secret\.yaml''',
+  '''apps/staging/linkding/cloudflare-secret\.yaml''',
+  '''apps/staging/linkding/linkding-container-env-secret\.yaml''',
+  '''clusters/staging/flux-system/blog-git-auth-secret\.yaml''',
+  '''monitoring/configs/staging/kube-prometheus-stack/grafana-tls-secret\.yaml''',
+  '''infrastructure/controllers/base/renovate/renovate-container-env\.yaml''',
+]
