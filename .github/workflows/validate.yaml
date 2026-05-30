@@ -115,11 +115,25 @@ jobs:
           sudo install gitleaks /usr/local/bin/gitleaks
           gitleaks version
 
-      - name: Run gitleaks
+      - name: Run gitleaks (current file contents)
         run: |
           set -euo pipefail
+          # 'dir' scans the actual file contents on disk catches any secret
+          # present in the repo right now, regardless of commit structure.
+          gitleaks dir . \
+            --config .gitleaks.toml \
+            --redact \
+            --verbose \
+            --exit-code 1
+
+      - name: Run gitleaks (full git history)
+        run: |
+          set -euo pipefail
+          # 'git' scans commit patches across all history catches secrets that
+          # were committed and later removed from the working tree.
           gitleaks git . \
             --config .gitleaks.toml \
+            --log-opts="--all" \
             --redact \
             --verbose \
             --exit-code 1
