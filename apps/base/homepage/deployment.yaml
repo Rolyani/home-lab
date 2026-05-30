@@ -6,6 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: homepage
 spec:
+  notARealField: true
   revisionHistoryLimit: 3
   replicas: 1
   strategy:
