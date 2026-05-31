@@ -1,5 +1,6 @@
 # home-lab
 ![Validate](https://github.com/Rolyani/home-lab/actions/workflows/validate.yaml/badge.svg)
+<img alt="gitleaks badge" src="https://img.shields.io/badge/protected%20by-gitleaks-blue">
 
 
  GitOps-managed Kubernetes homelab running on [k3s](https://k3s.io/) and reconciled by [Flux CD](https://fluxcd.io/). 
