@@ -78,31 +78,40 @@ The `base` / `staging` split is standard Kustomize: `base/` holds environment-ag
  3. **Secrets stay encrypted in Git.** Files are encrypted with `age` per the rules in `.sops.yaml`; Flux decrypts them at apply time using the `sops-age` secret. Plaintext secrets never hit the repo.
  4. **Image updates flow through Renovate.** It opens PRs to bump container images and Helm charts; merging the PR is the deploy.
 
-## Validation & security
+## CI/CD & dependency management
 
-Every pull request to `main` must pass four required checks before it can
-merge — direct pushes to `main` are blocked, so the checks below are a hard
-gate, not advisory. This applies to Renovate's automated PRs too.
+Every change to the cluster flows through the same gate: a pull request to main that must pass four required checks before it can merge. Direct pushes to main are blocked, so the checks are a hard gate rather than advisory. The rule applies equally to my own PRs and to Renovate's automated ones.
 
-| Check | What it does |
-|-------|--------------|
-| **Build & schema-validate overlays** | Renders each Kustomize overlay exactly as Flux would (`kustomize build`) and schema-validates the output with `kubeconform`, including CNPG / Longhorn / Prometheus / Flux CRDs via the community schema catalog. Catches broken manifests before they reach the cluster. |
+Validation on every PR (.github/workflows/validate.yaml):
+| Check | What it guards against |
+|-------|------------------------|
+| **Build & schema-validate overlays** | Renders each Kustomize overlay exactly as Flux would (`kustomize build`) and schema-validates the output with `kubeconform`, including CNPG / Longhorn / Prometheus / Flux CRDs via the community schema catalogue. Catches broken manifests before they reach the cluster. |
 | **Verify Secrets are SOPS-encrypted** | Fails the build if any `kind: Secret` with a committed payload is not SOPS-encrypted. ServiceAccount-token Secrets (cluster-minted payload) are exempt. |
-| **Scan for leaked secrets** | Runs `gitleaks` across full git history. SOPS ciphertext is allowlisted; anything else that looks like a credential fails the build. |
-| **Check for deprecated API versions** | Runs `flux migrate` and fails if it would rewrite any manifest, catching deprecated Kubernetes/Flux apiVersions. |
+| **Scan for leaked secrets** | Runs `gitleaks` over current file contents and full git history. SOPS ciphertext is allowlisted; any other credential-shaped string fails the build. |
+| **Check for deprecated API versions** | Runs `flux migrate` and fails if it would rewrite any manifest, catching deprecated Kubernetes/Flux apiVersions before they become breaking. |
 
-The SOPS-encryption and gitleaks checks are complementary: the first guarantees
-the allowlisted files are actually encrypted; the second guarantees nothing
-leaks outside them. Together they let this repo hold encrypted secrets in public
-safely.
+The SOPS-encryption and gitleaks checks are complementary: the first guarantees the allowlisted files are actually encrypted, the second guarantees nothing leaks outside them. Together, they let this repo hold encrypted secrets in public safely. The manifest-validation approach follows the official Flux CI example [`fluxcd/flux2-kustomize-helm-example`](https://github.com/fluxcd/flux2-kustomize-helm-example); the encryption and secret-scanning checks are additions specific to running a public repo that stores encrypted secrets.
 
-The manifest-validation approach follows the official Flux CI example
-([`fluxcd/flux2-kustomize-helm-example`](https://github.com/fluxcd/flux2-kustomize-helm-example));
-the SOPS-encryption and gitleaks checks are additions specific to running a
-public repo that stores encrypted secrets.
+Automated updates (Renovate, self-hosted as a CronJob) keep images, Helm charts, and GitHub Actions current and feed every update through the same gate:
+
+- **Low-risk updates** (minor, patch, digest) auto-merge **only after the four
+  required checks pass** auto-merge is a delegation of trust to the CI
+  pipeline, not a bypass of it.
+- **Major updates** never auto-merge; they wait for manual approval via the
+  Renovate **dependency dashboard**, which also surfaces everything Renovate is
+  tracking or holding back in a single issue.
+- **Supply-chain quarantine:** a `minimumReleaseAge` of 14 days means no release
+  auto-merges until it has been public for two weeks, giving the ecosystem time
+  to detect and pull a compromised release before it could reach the cluster.
+- **Scheduling:** Renovate only opens PRs and auto-merges over the weekend, with
+  merges cut off by Sunday evening, so an automated change never lands right
+  before the work week, when there'd be no time to address a regression.
+- **Pinned and reproducible:** GitHub Actions are pinned to commit SHAs (and
+  kept updated by Renovate), so every workflow runs exactly the reviewed code.
+
+The result is a single, consistent change-control loop: nothing reaches main unvalidated, low-risk updates flow in automatically once they're proven safe, risky ones wait for a human, and the whole dependency picture is visible in one place.
 
 <img width="809" height="389" alt="image" src="https://github.com/user-attachments/assets/73c908e4-8b9c-4c9a-afa6-f2639cf3e762" />
-
 
 ## Applications
 
