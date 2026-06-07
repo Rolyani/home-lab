@@ -10,10 +10,14 @@
   "schedule": ["after 7pm on friday", "on saturday", "before 10pm on sunday"],
   "automergeSchedule": ["after 7pm on friday", "on saturday", "before 6pm on sunday"],
   "kubernetes": {
-    "fileMatch": ["\\.yaml$"]
+    "managerFilePatterns": [
+      "/\\.yaml$/"
+    ]
   },
   "flux": {
-    "fileMatch": ["\\.yaml$"]
+    "managerFilePatterns": [
+      "/\\.yaml$/"
+    ]
   },
   "labels": ["dependencies"],
   "automergeType": "pr",
