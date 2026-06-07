@@ -1,8 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "timezone": "Europe/London",
+  "schedule": ["after 7pm on friday", "on saturday", "before 10pm on sunday"],
+  "automergeSchedule": ["after 7pm on friday", "on saturday", "before 6pm on sunday"],
   "kubernetes": {
-    "fileMatch": [
-      "\\.yaml$"
-    ]
-  }
+    "fileMatch": ["\\.yaml$"]
+  },
+  "flux": {
+    "fileMatch": ["\\.yaml$"]
+  },
+  "labels": ["dependencies"],
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "rebaseWhen": "behind-base-branch",
+  "minimumReleaseAge": "14 days",
+  "packageRules": [
+    {
+      "description": "Auto-merge low-risk updates once required CI checks pass",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Major updates require manual review via the dashboard",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true,
+      "addLabels": ["major-update", "needs-review"]
+    },
+    {
+      "description": "Group non-major updates to reduce PR noise",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies"
+    }
+  ]
 }
