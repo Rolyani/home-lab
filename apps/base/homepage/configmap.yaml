@@ -8,18 +8,15 @@ metadata:
 data:
   kubernetes.yaml: |
     mode: cluster
-
   settings.yaml: |
     title: home-lab
     favicon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png
-
     theme: dark
     color: slate
     headerStyle: clean
     hideVersion: true
     statusStyle: dot
     target: _blank
-
     # Layout controls grouping order, columns, and card style.
     # Order here = order on the page.
     layout:
@@ -32,7 +29,6 @@ data:
       Monitoring & Platform:
         style: row
         columns: 3
-
   widgets.yaml: |
     # Header resource tiles (the live CPU/Mem/Network strip at the top)
     - kubernetes:
@@ -56,20 +52,12 @@ data:
     - search:
         provider: duckduckgo
         target: _blank
-
   services.yaml: |
     - Cluster Management:
-        - Homepage:
-            icon: homepage.png
-            href: https://home.ian-naylor.com
-            description: This dashboard
-            namespace: homepage
-            app: homepage
         - Renovate:
             icon: renovate.png
             href: https://github.com/Rolyani/home-lab/pulls
             description: Automated dependency PRs
-
     - Applications:
         - Blog — Lessons in Progress:
             icon: si-ghost
@@ -89,7 +77,6 @@ data:
             description: Recipe manager
             namespace: mealie
             app: mealie
-
     - Monitoring & Platform:
         - Grafana:
             icon: grafana.png
@@ -98,9 +85,16 @@ data:
             namespace: monitoring
             app: grafana
             widget:
-              type: grafana
-              url: https://grs.ian-naylor.com
-
+              type: prometheusmetric
+              url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+              refreshInterval: 10000
+              metrics:
+                - label: Dashboards
+                  query: grafana_stat_totals_dashboard
+                - label: Data sources
+                  query: grafana_stat_totals_datasource
+                - label: Alert rules
+                  query: grafana_stat_totals_alert_rules
   bookmarks.yaml: |
     - Blog:
         - Lessons in Progress:
@@ -120,7 +114,6 @@ data:
         - Flux CD:
             - abbr: FX
               href: https://fluxcd.io
-
   docker.yaml: ""
   custom.css: ""
   custom.js: ""
