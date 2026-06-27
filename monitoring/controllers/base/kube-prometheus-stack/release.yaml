@@ -27,22 +27,23 @@ spec:
           kind: PrometheusRule
   values:
     grafana:
-      adminPassword: iann
+      admin:
+        existingSecret: grafana-admin-credentials
+        userKey: admin-user
+        passwordKey: admin-password
+      serviceMonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
       ingress:
         enabled: true
-
         ingressClassName: traefik
-
         hosts:
           - grs.ian-naylor.com
-
         ## Path for grafana ingress
         path: /
-
         ## TLS configuration for grafana Ingress
         ## Secret must be manually created in the namespace
         ##
         tls:
           - secretName: grafana-tls-secret
-            hosts:
-              - grs.ian-naylor.com
