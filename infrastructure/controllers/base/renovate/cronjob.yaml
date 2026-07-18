@@ -4,19 +4,20 @@ metadata:
   name: renovate
   namespace: renovate
 spec:
-  schedule: "@hourly"
+  schedule: "0 */6 * * *"
   concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
   jobTemplate:
     spec:
       template:
         spec:
           containers:
             - name: renovate
-              image: renovate/renovate:latest
+              image: renovate/renovate:43.269.2
+              imagePullPolicy: IfNotPresent
               args:
                 - Rolyani/home-lab
                 - Rolyani/blog-final
-
               envFrom:
                 - secretRef:
                     name: renovate-container-env
