@@ -1,0 +1,17 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: mp-bot-db
+  namespace: mp-telegram-bot
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.15
+  storage:
+    size: 2Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: mpbot
+      owner: mpbot
+  monitoring:
+    enablePodMonitor: true
