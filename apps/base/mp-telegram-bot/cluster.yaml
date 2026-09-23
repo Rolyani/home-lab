@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: mp-bot-db
+  namespace: mp-telegram-bot
+spec:
+  instances: 1
+  storage:
+    size: 2Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: mp-bot-db
+      owner: mp-bot-db
