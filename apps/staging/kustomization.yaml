@@ -5,3 +5,4 @@ resources:
   - ./linkding
   - ./blog
   - ./mealie
+  - ./mp-telegram-bot

@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: mp-telegram-bot
 resources:
   - ../../base/mp-telegram-bot
+  - mp-telegram-bot-token-secret.yaml

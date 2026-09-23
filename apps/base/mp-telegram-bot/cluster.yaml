@@ -5,10 +5,13 @@ metadata:
   namespace: mp-telegram-bot
 spec:
   instances: 1
+  imageName: gchr.io/cloudnative-pg/postgresql:16.15
   storage:
     size: 2Gi
     storageClass: longhorn
   bootstrap:
     initdb:
-      database: mp-bot-db
-      owner: mp-bot-db
+      database: mpbot
+      owner: mpbot
+  monitoring:
+    enablePodMonitor: true
