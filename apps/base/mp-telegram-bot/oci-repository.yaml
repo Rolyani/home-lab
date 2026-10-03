@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: mp-telegram-bot
+  namespace: mp-telegram-bot
+spec:
+  interval: 1h
+  url: oci://ghcr.io/rolyani/charts/mp-telegram-bot
+  ref:
+    tag: "0.1.0"
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
