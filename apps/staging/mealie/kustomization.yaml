@@ -5,6 +5,6 @@ resources:
   - ../../base/mealie
 images:
   - name: ghcr.io/mealie-recipes/mealie
-    newTag: v3.19.2
+    newTag: v3.19.2@sha256:f68e959bf66f4f458893ea58facac71690fe6f2ac7a31466b5cecb41b4e99c02
   - name: cloudflare/cloudflared
     newTag: 2026.7.3@sha256:e39ee8da81ad5e05d77f38d2f51c60ca51bf2a8450ac3abab50c17fdb91d91bf
