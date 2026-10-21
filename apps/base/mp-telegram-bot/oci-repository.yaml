@@ -8,6 +8,7 @@ spec:
   url: oci://ghcr.io/rolyani/charts/mp-telegram-bot
   ref:
     tag: "0.1.2"
+    digest: sha256:cb3a25d53e767b85d26897545640dacd8905f63a3f8105d7b099772d9e33c29e
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
